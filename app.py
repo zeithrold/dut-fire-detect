@@ -15,7 +15,11 @@ from ultralytics import YOLO
 from ultralytics.engine.results import Results
 
 # 在这里输入训练好的模型路径
-model_path = "./weight.pt"
+model_path = "./weights/fire.pt"
+
+if not Path(model_path).exists():
+    logger.error(f"模型文件{model_path}不存在，请检查路径是否正确。")
+    raise FileNotFoundError(f"模型文件{model_path}不存在，请检查路径是否正确。")
 
 image_file_suffix = ["jpg", "jpeg", "png"]
 
