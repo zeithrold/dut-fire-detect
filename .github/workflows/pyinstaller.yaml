@@ -39,8 +39,11 @@ jobs:
       - name: Move weights
         run: |
           mv weights dist/app
+      - name: Make Archive
+        run: |
+          7z a -tzip dist/app.zip dist/app
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: app-${{ matrix.os }}
-          path: dist/app
+          path: dist/app.zip
