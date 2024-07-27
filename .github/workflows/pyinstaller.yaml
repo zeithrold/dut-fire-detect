@@ -28,10 +28,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: |
           curl -L $WEIGHTS_URL -o weights/fire.pt
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
       - name: Install dependencies (with CUDA)
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest'
         run: |
