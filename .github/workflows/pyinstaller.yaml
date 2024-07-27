@@ -14,6 +14,9 @@ jobs:
       WEIGHTS_URL: https://github.com/zeithrold/dut-fire-detect/releases/download/v1.0.0/fire.pt
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
       - name: Make weights directory
         run: |
           mkdir weights
