@@ -1,6 +1,6 @@
-torch
+torch===2.4.0
 torchvision
-ultralytics
+ultralytics==8.2.66
 opencv-python
 pycocotools
 matplotlib
