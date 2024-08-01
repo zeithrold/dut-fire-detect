@@ -2,6 +2,7 @@ import tempfile
 from io import BytesIO
 from zipfile import ZipFile
 from pathlib import Path
+from dataclasses import dataclass
 
 from typing import List
 
@@ -25,6 +26,12 @@ image_file_suffix = ["jpg", "jpeg", "png"]
 
 logger.info("正在加载模型...")
 model = YOLO(model_path)
+
+
+@dataclass
+class Plot:
+    filename: str
+    img: Image.Image
 
 
 def get_area(contours: List[np.ndarray]):
@@ -77,7 +84,9 @@ def parse_zipfile(file_path: str):
 def segment(image_list: List[Image.Image], progress: gr.Progress):
     logger.info("开始分割图片...")
     results = []
+    plots: List[Plot] = []
     for image in progress.tqdm(image_list, desc="正在分割图片..."):
+        filename: str = image.filename
         seg: Results = model(image, verbose=False)[0]
         if not seg.masks:
             results.append(
@@ -90,8 +99,15 @@ def segment(image_list: List[Image.Image], progress: gr.Progress):
             continue
         masks = seg.masks.data
         path = seg.path
-        if type(masks) != np.ndarray:
+        if type(masks) is not np.ndarray:
             masks = masks.cpu().numpy()
+        plot_img = Image.fromarray(seg.plot())
+        plots.append(
+            Plot(
+                filename=f"{filename}_plotted.png",
+                img=plot_img,
+            )
+        )
         del seg
         contours, length = get_contours(masks)
         area = get_area(contours)
@@ -102,19 +118,30 @@ def segment(image_list: List[Image.Image], progress: gr.Progress):
                 "path": path,
             }
         )
-    return results
+    return results, plots
 
 
 def gradio_interface(file: str, progress=gr.Progress()):
     logger.info(f"接收到Gradio任务：{file}")
     image_list = parse_zipfile(file)
     archive_file = Path(file).name
-    results = segment(image_list, progress)
+    results, plots = segment(image_list, progress)
     df = pd.DataFrame(results)
     df.reset_index(inplace=True)
     excel_file = tempfile.NamedTemporaryFile(
         prefix=f"result_{archive_file}_", suffix=".xlsx", delete=False
     )
+    zip_file = tempfile.NamedTemporaryFile(
+        prefix=f"plots_{archive_file}", suffix=".zip", delete=False
+    )
+    with tempfile.TemporaryDirectory() as temp_dir:
+        with ZipFile(zip_file, "w") as zip_ref:
+            for plot in plots:
+                plot_path = Path(temp_dir) / plot.filename
+                plot.img.save(plot_path)
+                zip_path = Path("plots") / plot.filename
+                zip_ref.write(plot_path, zip_path)
+
     df.to_excel(excel_file, index=False)
     logger.success(f"完成Gradio任务：{file}")
     return (
@@ -135,6 +162,7 @@ def gradio_interface(file: str, progress=gr.Progress()):
             y_title="周长",
         ),
         excel_file.name,
+        zip_file.name
     )
 
 
@@ -157,9 +185,10 @@ with gr.Blocks() as demo:
                 length_title = gr.Markdown("### 周长")
                 length_barplot = gr.BarPlot()
         result_file = gr.File(label="下载结果")
+        plot_file = gr.File(label="下载图片")
     button.click(
         fn=gradio_interface,
         inputs=[file],
-        outputs=[area_barplot, length_barplot, result_file],
+        outputs=[area_barplot, length_barplot, result_file, plot_file],
     )
 demo.launch(share=True)

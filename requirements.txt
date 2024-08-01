@@ -11,7 +11,7 @@ jupyter
 numpy
 pandas
 scipy
-gradio
+gradio==4.38.0
 openpyxl
 loguru
 roboflow
