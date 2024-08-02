@@ -138,6 +138,8 @@ def gradio_interface(file: str, progress=gr.Progress()):
         with ZipFile(zip_file, "w") as zip_ref:
             for plot in plots:
                 plot_path = Path(temp_dir) / plot.filename
+                if not plot_path.parent.exists():
+                    plot_path.parent.mkdir(parents=True)
                 plot.img.save(plot_path)
                 zip_path = Path("plots") / plot.filename
                 zip_ref.write(plot_path, zip_path)
