@@ -1,0 +1,15 @@
+[package]
+name = "dut-fire-detect"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.86"
+image = "0.25.2"
+ndarray = "0.15.0"
+zip = "2.1.6"
+
+[dependencies.ort]
+version = "2.0.0-rc.4"
+default-features = true
+features = ["cuda", "coreml", "directml"]
