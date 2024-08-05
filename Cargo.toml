@@ -8,8 +8,12 @@ anyhow = "1.0.86"
 image = "0.25.2"
 ndarray = "0.15.0"
 zip = "2.1.6"
+ort = "2.0.0-rc.4"
+opencv = "0.92.2"
 
-[dependencies.ort]
-version = "2.0.0-rc.4"
-default-features = true
-features = ["cuda", "coreml", "directml"]
+[features]
+default = ["cpu"]
+cpu = []
+cuda = ["ort/cuda"]
+coreml = ["ort/coreml"]
+directml = ["ort/directml"]

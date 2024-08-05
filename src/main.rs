@@ -1,7 +1,9 @@
+pub mod session;
+pub mod data;
+
 use ort::{
     GraphOptimizationLevel,
     Session,
-    CoreMLExecutionProvider,
     Tensor
 };
 use ndarray::Array4;
@@ -12,7 +14,7 @@ fn main() -> anyhow::Result<()> {
     let input = Tensor::from_array(input)?;
     let session = Session::builder()?
         .with_execution_providers([
-            CoreMLExecutionProvider::default().build()
+            session::get_coreml_provider()
         ])?
         .with_optimization_level(GraphOptimizationLevel::Level3)?
         .commit_from_file("model.onnx")?;

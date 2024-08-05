@@ -1,0 +1,60 @@
+name: Rust Build
+on:
+  push:
+    branches:
+      - rust-desktop
+
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        env:
+          - os: ubuntu-latest
+            backend: cuda
+            target: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            backend: cpu
+            target: x86_64-unknown-linux-gnu
+          - os: windows-latest
+            backend: cuda
+            target: x86_64-pc-windows-msvc
+          - os: windows-latest
+            backend: directml
+            target: x86_64-pc-windows-msvc
+          - os: windows-latest
+            backend: cpu
+            target: x86_64-pc-windows-msvc
+          - os: macos-latest
+            backend: coreml
+            target: x86_64-apple-darwin
+          - os: macos-latest
+            backend: coreml
+            target: aarch64-apple-darwin
+
+    runs-on: ${{ matrix.env.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          export PATH="$HOME/.cargo/bin:$PATH"
+      - name: Install dependencies
+        run: |
+          rustup target add ${{ matrix.env.target }}
+          rustup component add rustfmt
+          rustup component add clippy
+      # - name: Install dependencies
+      #   run: |
+      #     rustup target add x86_64-pc-windows-gnu
+      #     rustup target add x86_64-apple-darwin
+      # - name: Build executable
+      #   run: |
+      #     cargo build --release
+      # - name: Make archive
+      #   run: |
+      #     7z a -tzip dist/app.zip target/release/app
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: app-${{ matrix.env.os }}
