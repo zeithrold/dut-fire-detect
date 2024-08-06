@@ -8,10 +8,22 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        backend: [cuda, directml, cpu]
+        exclude:
+          - os: macos-latest
+            backend: directml
+          - os: macos-latest
+            backend: cuda
+          - os: macos-13
+            backend: cuda
+          - os: macos-13
+            backend: directml
+          - os: ubuntu-latest
+            backend: directml
     runs-on: ${{ matrix.os }}
     env:
-      WEIGHTS_URL: https://github.com/zeithrold/dut-fire-detect/releases/download/v1.0.0/fire.pt
+      WEIGHTS_URL: https://github.com/zeithrold/dut-fire-detect/releases/download/v1.1.0/model.onnx
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v5
@@ -20,35 +32,26 @@ jobs:
       - name: Make weights directory
         run: |
           mkdir weights
-      - name: Download weights (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Download weights
         run: |
-          Invoke-WebRequest -Uri $env:WEIGHTS_URL -OutFile weights/fire.pt
-      - name: Download weights (Linux and macOS)
-        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+          aria2c -x 16 -s 16 -d weights $WEIGHTS_URL
+      - name: Install pip-tools
         run: |
-          curl -L $WEIGHTS_URL -o weights/fire.pt
-      - name: Install dependencies (with CUDA)
-        if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest'
+          pip install pip-tools
+      - name: Generate requirements
         run: |
-          python -m pip install --upgrade pip
+          pip-compile --output-file requirements.txt --extra ${{ matrix.backend }} pyproject.toml
+      - name: Install dependencies
+        run: |
           pip install -r requirements.txt
-      - name: Install dependencies (without CUDA)
-        if: matrix.os == 'macos-latest'
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.darwin.txt
       - name: Build executable
         run: |
-          python -m PyInstaller app.spec
+          python -m PyInstaller dire-detect.spec
       - name: Move weights
         run: |
-          mv weights dist/app
-      - name: Make archive
-        run: |
-          7z a -tzip dist/app.zip dist/app
+          mv weights dist/
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: app-${{ matrix.os }}
-          path: dist/app.zip
+          name: app-${{ runner.os }}-${{ runner.arch }}-${{ matrix.backend }}
+          path: dist

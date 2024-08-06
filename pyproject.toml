@@ -1,0 +1,20 @@
+[project]
+name = "dut-fire-detect"
+requires-python = ">=3.10"
+dynamic = ["version"]
+dependencies = [
+    "opencv-python",
+    "matplotlib",
+    "onnxruntime",
+    "numpy",
+    "pandas",
+    "gradio==4.38.0",
+    "loguru",
+    "PyInstaller"
+]
+
+[project.optional-dependencies]
+dev = ["ruff"]
+cuda = ["onnxruntime-gpu"]
+directml = ["onnxruntime-directml"]
+cpu = []
