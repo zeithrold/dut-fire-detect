@@ -18,3 +18,6 @@ dev = ["ruff"]
 cuda = ["onnxruntime-gpu"]
 directml = ["onnxruntime-directml"]
 cpu = []
+
+[tool.setuptools]
+py-modules = []
