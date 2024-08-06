@@ -46,7 +46,7 @@ jobs:
           pip install -r requirements.txt
       - name: Build executable
         run: |
-          python -m PyInstaller dire-detect.spec
+          python -m PyInstaller fire-detect.spec
       - name: Move weights
         run: |
           mv weights dist/
