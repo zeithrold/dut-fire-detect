@@ -34,7 +34,7 @@ jobs:
           mkdir weights
       - name: Download weights
         run: |
-          aria2c -x 16 -s 16 -d weights $WEIGHTS_URL
+          aria2c -x 16 -s 16 -d weights ${{ env.WEIGHTS_URL }}
       - name: Install pip-tools
         run: |
           pip install pip-tools
