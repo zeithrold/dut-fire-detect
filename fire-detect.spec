@@ -1,5 +1,4 @@
 # -*- mode: python ; coding: utf-8 -*-
-import platform
 from PyInstaller.utils.hooks import collect_data_files
 from PyInstaller.utils.hooks import collect_all
 
@@ -10,10 +9,6 @@ datas += collect_data_files('gradio')
 datas += collect_data_files('gradio_client')
 tmp_ret = collect_all('onnxruntime')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
-
-if platform.system() == 'Windows':
-    temp_ret = collect_all('msvc_runtime')
-    datas += temp_ret[0]; binaries += temp_ret[1]; hiddenimports += temp_ret[2]
 
 a = Analysis(
     ['dut_fire_detect/__main__.py'],

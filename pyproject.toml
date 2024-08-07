@@ -16,7 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["ruff"]
 cuda = ["onnxruntime-gpu"]
-directml = ["onnxruntime-directml", "msvc-runtime"]
+directml = ["onnxruntime-directml"]
 cpu = []
 
 [tool.setuptools]
