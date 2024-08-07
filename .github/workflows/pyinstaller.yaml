@@ -49,9 +49,9 @@ jobs:
           python -m PyInstaller fire-detect.spec
       - name: Move weights
         run: |
-          mv weights dist/
+          mv weights dist/fire-detect/
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: app-${{ runner.os }}-${{ runner.arch }}-${{ matrix.backend }}
-          path: dist
+          path: dist/fire-detect
