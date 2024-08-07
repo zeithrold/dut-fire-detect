@@ -1,10 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
-from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller.utils.hooks import collect_data_files, collect_dynamic_libs
 
 datas = []
 datas += collect_data_files('gradio')
 datas += collect_data_files('gradio_client')
 
+binaries = collect_dynamic_libs('onnxruntime', destdir='onnxruntime/capi')
 
 a = Analysis(
     ['dut_fire_detect/__main__.py'],
