@@ -9,14 +9,18 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        backend: [cuda, directml, cpu]
+        backend: [cuda11, cuda12, directml, cpu]
         exclude:
           - os: macos-latest
             backend: directml
           - os: macos-latest
-            backend: cuda
+            backend: cuda11
+          - os: macos-latest
+            backend: cuda12
           - os: macos-13
-            backend: cuda
+            backend: cuda11
+          - os: macos-13
+            backend: cuda12
           - os: macos-13
             backend: directml
           - os: ubuntu-latest
@@ -40,7 +44,7 @@ jobs:
           pip install pip-tools
       - name: Generate requirements
         run: |
-          pip-compile --output-file requirements.txt --extra ${{ matrix.backend }} pyproject.toml
+          pip-compile --output-file requirements.txt --extra ${{ matrix.backend }} ${{ matrix.backend == 'cuda12' && '--extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/' || '' }} pyproject.toml
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
