@@ -9,6 +9,16 @@ all_available_providers: List[str] = ort.get_available_providers()
 if "AzureExecutionProvider" in all_available_providers:
     all_available_providers.remove("AzureExecutionProvider")
 
+if all_available_providers == ["CPUExecutionProvider"]:
+    logger.warning(
+        "Only CPUExecutionProvider is available, "
+        "which means the model will run only on CPU."
+        "Tt's either because you don't have a GPU or"
+        "your GPU don't support corresponding providers"
+        "(no CUDA Toolkit for CUDA version, or no DirectX 12 for DirectML version)."
+        "You should consider installing other providers for better performance."
+    )
+
 logger.info(f"Available providers: {all_available_providers}")
 
 

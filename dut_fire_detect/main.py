@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List
 
+import cv2
 import gradio as gr
 from loguru import logger
 from tqdm import tqdm
@@ -19,14 +20,25 @@ if not model_path.exists():
 model = Model(str(model_path))
 
 
-def gradio_predict(input_file: str, _=gr.Progress(track_tqdm=True)):
+def gradio_predict(
+    input_file: str,
+    conf_threshold: float,
+    iou_threshold: float,
+    _=gr.Progress(track_tqdm=True),
+):
     img_list = file.read_zipfile(input_file)
     result_list: List[data.ImageResult] = []
     for img_item in tqdm(img_list):
-        boxes, segments, masks = model(img_item.img)
-        contours, length = data.get_contours(masks)
-        area = data.get_area(contours)
-        plotted_img = model.draw_and_visualize(img_item.img, boxes, segments)
+        boxes, segments, masks = model(img_item.img, conf_threshold, iou_threshold)
+        if segments == []:
+            length = 0.0
+            area = 0.0
+            plotted_img = img_item.img
+        else:
+            seg = segments[0]
+            length = cv2.arcLength(seg, True)
+            area = cv2.contourArea(seg)
+            plotted_img = model.draw_and_visualize(img_item.img, boxes, segments)
         result_list.append(
             data.ImageResult(img_item.filename, length, area, plotted_img)
         )
@@ -64,6 +76,21 @@ def main():
                 )
             )
             file = gr.File(label="上传图片", file_types=[".zip"])
+            with gr.Row():
+                conf_threshold = gr.Slider(
+                    label="置信度阈值",
+                    minimum=0.0,
+                    maximum=1.0,
+                    step=0.01,
+                    value=0.4,
+                )
+                iou_threshold = gr.Slider(
+                    label="IOU非极大值抑制阈值",
+                    minimum=0.0,
+                    maximum=1.0,
+                    step=0.01,
+                    value=0.45,
+                )
             button = gr.Button(value="开始分割", variant="primary")
         with gr.Column():
             gr.Markdown("## 分割结果")
@@ -78,7 +105,7 @@ def main():
             result_file = gr.File(label="下载结果")
         button.click(
             fn=gradio_predict,
-            inputs=[file],
+            inputs=[file, conf_threshold, iou_threshold],
             outputs=[area_barplot, length_barplot, result_file],
         )
-    demo.launch(share=True)
+    demo.launch(share=False)
