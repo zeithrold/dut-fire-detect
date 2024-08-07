@@ -10,7 +10,7 @@ binaries = collect_dynamic_libs('onnxruntime', destdir='onnxruntime/capi')
 a = Analysis(
     ['dut_fire_detect/__main__.py'],
     pathex=[],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     hiddenimports=[],
     hookspath=[],
