@@ -67,7 +67,7 @@ function install_packages {
     echo "Installing fire-detect..."
     activate_venv
     # Install required packages
-    pip install “dut-fire-detect[${backend}] @ https://github.com/zeithrold/dut-fire-detect/archive/${ref}.zip”
+    pip install "dut-fire-detect[${backend}] @ https://github.com/zeithrold/dut-fire-detect/archive/${ref}.zip"
     deactivate
 }
 
