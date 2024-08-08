@@ -20,5 +20,10 @@ cuda12 = ["onnxruntime-gpu"]
 directml = ["onnxruntime-directml"]
 cpu = []
 
+[project.scripts]
+dut-fire-detect = "dut_fire_detect.main:main"
+
 [tool.setuptools]
 py-modules = []
+
+

@@ -20,8 +20,6 @@ jobs:
           - os: macos-13
             backend: cuda11
           - os: macos-13
-            backend: cuda12
-          - os: macos-13
             backend: directml
           - os: ubuntu-latest
             backend: directml
@@ -29,7 +27,7 @@ jobs:
     env:
       WEIGHTS_URL: https://github.com/zeithrold/dut-fire-detect/releases/download/v1.1.0/model.onnx
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
