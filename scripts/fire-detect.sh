@@ -13,6 +13,10 @@ if [ $# -eq 2 ]; then
     ref=$2
 fi
 
+GITHUB_ENDPOINT="${GITHUB_ENDPOINT:-github.com}"
+
+WEIGHT_URL="https://${GITHUB_ENDPOINT}/zeithrold/dut-fire-detect/releases/download/v1.1.0/model.onnx"
+
 function check_python {
     if [ ! -x "$(command -v python)" ]; then
         echo "Python is not installed or not in PATH"
@@ -63,6 +67,15 @@ function check_already_installed {
     fi
 }
 
+function check_weights {
+    # Check if weights/model.onnx exists
+    if [ ! -f "weights/model.onnx" ]; then
+        echo "Downloading weights..."
+        mkdir -p weights
+        wget -O weights/model.onnx $WEIGHT_URL
+    fi
+}
+
 function install_packages {
     echo "Installing fire-detect..."
     activate_venv
@@ -73,4 +86,5 @@ function install_packages {
 
 check_python
 check_already_installed
+check_weights
 run
