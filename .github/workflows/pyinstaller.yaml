@@ -20,6 +20,8 @@ jobs:
           - os: macos-13
             backend: cuda11
           - os: macos-13
+            backend: cuda12
+          - os: macos-13
             backend: directml
           - os: ubuntu-latest
             backend: directml
