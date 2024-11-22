@@ -1,0 +1,14 @@
+[project]
+name = "project"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "gradio==4.38.0",
+  "loguru>=0.7.2",
+  "openpyxl>=3.1.5",
+  "pandas>=2.2.3",
+  "torch>=2.5.1",
+  "torchvision>=0.20.1",
+  "ultralytics>=8.3.35",
+  "fastapi==0.112.2"
+]
