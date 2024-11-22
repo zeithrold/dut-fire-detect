@@ -1,33 +1,14 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "dut-fire-detect"
-requires-python = ">=3.10"
-dynamic = ["version"]
+name = "project"
+version = "0.1.0"
+requires-python = ">=3.12"
 dependencies = [
-    "opencv-python",
-    "matplotlib",
-    "onnxruntime",
-    "numpy",
-    "pandas",
-    "gradio==4.38.0",
-    "loguru",
-    "PyInstaller"
+  "gradio==4.38.0",
+  "loguru>=0.7.2",
+  "openpyxl>=3.1.5",
+  "pandas>=2.2.3",
+  "torch>=2.5.1",
+  "torchvision>=0.20.1",
+  "ultralytics>=8.3.35",
+  "fastapi==0.112.2"
 ]
-
-[project.optional-dependencies]
-dev = ["ruff"]
-cuda11 = ["onnxruntime-gpu"]
-cuda12 = ["onnxruntime-gpu"]
-directml = ["onnxruntime-directml"]
-cpu = []
-
-[project.scripts]
-dut-fire-detect = "dut_fire_detect.main:main"
-
-[tool.setuptools]
-py-modules = []
-
-
