@@ -12,3 +12,16 @@ dependencies = [
   "ultralytics>=8.3.35",
   "fastapi==0.112.2"
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu124", marker = "platform_system != 'Darwin'"},
+]
+torchvision = [
+  { index = "pytorch-cu124", marker = "platform_system != 'Darwin'"},
+]
